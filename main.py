@@ -38,4 +38,25 @@ def get_stock_symbol():
         else:
             print("Enter a valid stock symbol.")
 
-## Test comments
+"""
+get_chart_type() - Asks the user for the chart type they would like.
+"""
+def get_chart_type():
+    print("\nChart Types:")
+    print("------------")
+    print("1. Bar Chart")
+    print("2. Line Chart")
+    
+    while True:
+        chart_choice = input("\nEnter the chart type you want (1, 2): ").strip()
+        
+        if chart_choice == '1':
+            return "bar"
+        elif chart_choice == '2':
+            return "line"
+        else:
+            print("Error: Please enter 1 for Bar or 2 for Line.")
+
+stock_symbol = get_stock_symbol()
+chart_type = get_chart_type()
+date = get_date_range()
