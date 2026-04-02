@@ -25,3 +25,15 @@ def get_date_range():
             return start_date, end_date
         else:
             print(f"Error: End date cannot be before start date.")
+
+"""
+Stock symbol query function that prompts the user for a stock symbol and validates
+"""
+
+def get_stock_symbol():
+    while True:
+        stock_symbol = input("Enter the stock symbol you are looking for: ")
+        if stock_symbol != "":
+            return stock_symbol.upper()
+        else:
+            print("Enter a valid stock symbol.")
