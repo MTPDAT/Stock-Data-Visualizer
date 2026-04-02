@@ -37,3 +37,5 @@ def get_stock_symbol():
             return stock_symbol.upper()
         else:
             print("Enter a valid stock symbol.")
+
+## Test comments
