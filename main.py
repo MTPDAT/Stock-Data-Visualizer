@@ -1,3 +1,5 @@
+import api_handler
+import visualizer
 from datetime import datetime
 
 """
@@ -57,6 +59,46 @@ def get_chart_type():
         else:
             print("Error: Please enter 1 for Bar or 2 for Line.")
 
-stock_symbol = get_stock_symbol()
-chart_type = get_chart_type()
-date = get_date_range()
+def main():
+    api_key = api_handler.get_api_key()
+    if not api_key:
+        print("Error: API Key is required to proceed.")
+        return
+
+    print("--- Stock Data Visualizer ---")
+    symbol = get_stock_symbol()
+    
+    # Time Series
+    print("\nSelect Time Series Interval:")
+    print("----------------------------")
+    time_series_names = api_handler.get_time_series_name_map()
+    for key, name in time_series_names.items():
+        print(f"{key}. {name}")
+    
+    while True:
+        series_choice = input("\nEnter choice (1-4): ").strip()
+        if series_choice in time_series_names:
+            break
+        print("Error: Please select a valid option (1, 2, 3, or 4).")
+
+    chart_type = get_chart_type()
+    start_date, end_date = get_date_range()
+
+    start_str = start_date.strftime("%Y-%m-%d")
+    end_str = end_date.strftime("%Y-%m-%d")
+
+    #Visualizer
+    try:
+        print("\nInitializing Graph Generation...")
+        visualizer.createGraph(
+            StartTime=start_str,
+            EndTime=end_str,
+            DesiredGraph=chart_type,
+            Company=symbol,
+            TimeSeries=series_choice
+        )
+    except Exception as e:
+        print(f"\nAn error occurred during visualization: {e}")
+
+if __name__ == "__main__":
+    main()
