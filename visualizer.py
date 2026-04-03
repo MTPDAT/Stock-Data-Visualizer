@@ -4,10 +4,28 @@ import pandas as pd
 from datetime import datetime
 import numpy as np
 import time
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+def get_api_key():
+    api_key = os.getenv("ALPHA_VANTAGE_API_KEY")
+
+    if not api_key:
+        print("API key not found.")
+        return None
+    return api_key
+
+TIME_SERIES_MAP = {
+    '1': 'Intraday',
+    '2': 'Daily',
+    '3': 'Weekly',
+    '4': 'Monthly'
+}
 
 def createGraph(StartTime, EndTime, DesiredGraph, Company, TimeSeries):
     # Map time series to Alpha Vantage API functions
-    API_KEY = "H0XQD306IFOZECWX"
+    API_KEY = get_api_key()
     function_map = {
         '1': 'TIME_SERIES_INTRADAY',
         '2': 'TIME_SERIES_DAILY',
@@ -27,22 +45,22 @@ def createGraph(StartTime, EndTime, DesiredGraph, Company, TimeSeries):
     # Prepare API request parameters
     base_url = 'https://www.alphavantage.co/query'
     params = {
-        'function': function_map[TimeSeries.lower()],
+        'function': function_map[TimeSeries],
         'symbol': Company.upper(),
         'apikey': API_KEY,
         'outputsize': 'full'  # Get full historical data
     }
     
     # Add interval parameter for intraday data
-    if TimeSeries.lower() == 'intraday':
+    if TimeSeries == '1':
         params['interval'] = '5min'  # Can be 1min, 5min, 15min, 30min, 60min
         params['adjusted'] = 'true'
         params['extended_hours'] = 'true'
-        output_key_map['intraday'] = f'Time Series ({params["interval"]})'
+        
     
     # Make API request
     try:
-        print(f"Fetching {TimeSeries} data for {Company}...")
+        print(f"Fetching {TIME_SERIES_MAP[TimeSeries]} data for {Company}...")
         response = requests.get(base_url, params=params)
         data = response.json()
         
@@ -57,9 +75,9 @@ def createGraph(StartTime, EndTime, DesiredGraph, Company, TimeSeries):
             data = response.json()
         
         # Extract time series data
-        time_series_key = output_key_map[TimeSeries.lower()]
+        time_series_key = output_key_map[TimeSeries]
         if time_series_key not in data:
-            raise ValueError(f"No {TimeSeries} data found for {Company}")
+            raise ValueError(f"No {TIME_SERIES_MAP[TimeSeries]} data found for {Company}")
         
         time_series_data = data[time_series_key]
         
@@ -127,7 +145,7 @@ def createGraph(StartTime, EndTime, DesiredGraph, Company, TimeSeries):
         raise ValueError(f"Invalid DesiredGraph. Choose from: 'bar' or 'line'")
     
     # Customize the graph
-    ax.set_title(f'{Company} Stock Price - {TimeSeries.title()} Data\n{StartTime} to {EndTime}', 
+    ax.set_title(f'{Company} Stock Price - {TIME_SERIES_MAP[TimeSeries]} Data\n{StartTime} to {EndTime}', 
                  fontsize=14, fontweight='bold')
     ax.set_xlabel('Date', fontsize=12)
     ax.set_ylabel('Price (USD)', fontsize=12)
