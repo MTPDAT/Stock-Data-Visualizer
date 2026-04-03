@@ -48,7 +48,7 @@ def createGraph(StartTime, EndTime, DesiredGraph, Company, TimeSeries):
         'function': function_map[TimeSeries],
         'symbol': Company.upper(),
         'apikey': API_KEY,
-        'outputsize': 'full'  # Get full historical data
+        'outputsize': 'compact'  # Get full historical data
     }
     
     # Add interval parameter for intraday data
@@ -78,7 +78,7 @@ def createGraph(StartTime, EndTime, DesiredGraph, Company, TimeSeries):
         time_series_key = output_key_map[TimeSeries]
         if time_series_key not in data:
             raise ValueError(f"No {TIME_SERIES_MAP[TimeSeries]} data found for {Company}")
-        
+
         time_series_data = data[time_series_key]
         
         # Convert to DataFrame
